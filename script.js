@@ -9,7 +9,137 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeThemeToggle();
     initializeMatrixRain();
     initializeQuantumParticles();
+    initialize3DInteractions();
+    initializeGlitchEffects();
+    initializeAdvancedCounters();
 });
+
+// 3D Interactive Elements
+function initialize3DInteractions() {
+    // 3D Project Cards
+    const projectCards = document.querySelectorAll('.project-card');
+    
+    projectCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 10;
+            const rotateY = (centerX - x) / 10;
+            
+            card.style.transform = `
+                perspective(1000px) 
+                rotateX(${rotateX}deg) 
+                rotateY(${rotateY}deg) 
+                translateZ(50px)
+                scale(1.05)
+            `;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+    });
+
+    // 3D Skill Categories
+    const skillCategories = document.querySelectorAll('.skill-category');
+    
+    skillCategories.forEach(category => {
+        category.addEventListener('mouseenter', () => {
+            category.style.transform = 'translateY(-10px) rotateX(5deg) scale(1.02)';
+        });
+        
+        category.addEventListener('mouseleave', () => {
+            category.style.transform = '';
+        });
+    });
+}
+
+// Advanced Glitch Effects
+function initializeGlitchEffects() {
+    const glitchElements = document.querySelectorAll('.hero-title, .section-title');
+    
+    glitchElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            applyGlitchEffect(element);
+        });
+    });
+}
+
+function applyGlitchEffect(element) {
+    const originalText = element.textContent;
+    const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?~`';
+    let glitchIterations = 0;
+    
+    const glitchInterval = setInterval(() => {
+        element.textContent = originalText
+            .split('')
+            .map((char, index) => {
+                if (index < glitchIterations) return originalText[index];
+                return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+            })
+            .join('');
+        
+        if (glitchIterations >= originalText.length) {
+            clearInterval(glitchInterval);
+            element.textContent = originalText;
+        }
+        
+        glitchIterations += 1;
+    }, 50);
+}
+
+// Advanced Counter Animations
+function initializeAdvancedCounters() {
+    const counters = document.querySelectorAll('.stat-number');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateAdvancedCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => observer.observe(counter));
+}
+
+function animateAdvancedCounter(element) {
+    const target = parseInt(element.getAttribute('data-target') || '50');
+    const duration = 2000;
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth acceleration/deceleration
+        const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        const current = Math.floor(easeOutExpo * target);
+        
+        element.textContent = current;
+        
+        // Add random glitch effect during counting
+        if (Math.random() < 0.1 && progress < 0.9) {
+            const glitchValue = Math.floor(Math.random() * target);
+            element.textContent = glitchValue;
+            setTimeout(() => {
+                element.textContent = current;
+            }, 50);
+        }
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
 
 // Neural Network Background System
 function initializeNeuralNetwork() {
